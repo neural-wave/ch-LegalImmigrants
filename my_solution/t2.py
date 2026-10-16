@@ -6,11 +6,13 @@ Rules found:
 - monthly loop from the start date to the month before maturity: premium net of the entry charge when due,
   then admin fee, management charge AMCP2/12, risk charge, then growth at rate/12, each step to the cent;
 - risk charge = sum at risk (death benefit option A/B/C minus fund value) x qx/12 x (1 + loading) x smoker
-  factor, with the age at the policy anniversary rounded to the nearest birthday in whole months;
+  factor, with the age of the policy year: Java offers the nearest birthday in whole months at the
+  anniversary, COBOL offers the entry age (nearest birthday from calendar days / 365) plus completed years;
 - offers applied for in the COBOL era truncate every step, later offers round half up.
 """
 from decimal import Decimal
 
+from ages import risk_age
 from dates import day, raw_day, rounding
 from loader import by_key, number, table
 from params import broker_tier, charges, entry_rate, first_version, illustration_rate
@@ -31,7 +33,7 @@ def offer(legacy_dir, policy, risk, person):
     smoker = number(charge["CG_SMKFAC"], 6) if person["PS_SMOKE"] in ("J", "Y") else Decimal(1)
     entry = entry_rate(legacy_dir, broker_tier(legacy_dir, head["PH_BRKNR"]), applied)
     return dict(
-        begin=day(head["PH_BEGDT"]), end=day(head["PH_ENDDT"]), step=FREQUENCY_MONTHS[head["PH_FREQ"]],
+        applied=applied, begin=day(head["PH_BEGDT"]), end=day(head["PH_ENDDT"]), step=FREQUENCY_MONTHS[head["PH_FREQ"]],
         rounding=mode, net_premium=(number(head["PH_PREMI"], 2) * (1 - entry)).quantize(CENT, mode),
         admin=number(charge["CG_ADMFEE"], 2), amc=number(charge["CG_AMCP2"], 6), table=charge["CG_MORTTB"],
         growth=1 + illustration_rate(legacy_dir, applied) / 12, option=key[6],
@@ -39,25 +41,16 @@ def offer(legacy_dir, policy, risk, person):
         sex=person["PS_SEX"] if key[2] == "U" else SEX_OF_TARIFF[key[2]], birth=raw_day(person["PS_BIRTH"]))
 
 
-def risk_age(q, month):
-    """Age at the policy anniversary of projection month `month`.
-
-    Nearest birthday counted in whole months: a started month counts only once the birthday day is reached.
-    """
-    birth_year, birth_month, birth_day = q["birth"]
-    begin, year = q["begin"], q["begin"].year + month // 12
-    months = (year - birth_year) * 12 + begin.month - birth_month - (begin.day < birth_day)
-    return (months + 6) // 12
-
-
 def risk_charge(q, qx, value, month):
     """Monthly risk charge on the sum at risk of the death benefit option.
 
     A: 101 % of the fund value, B: the higher of sum insured and fund value, C: fund value plus sum insured.
+    The age is the one of the policy year (ages.risk_age: COBOL offers entry age + years, Java whole months).
     """
     benefit = {"A": value * Decimal("1.01"), "B": max(q["sum_insured"], value), "C": value + q["sum_insured"]}
     at_risk = max(benefit[q["option"]] - value, Decimal(0))
-    return at_risk * qx[(q["table"], q["sex"], risk_age(q, month))] / 12 * q["risk_factor"]
+    age = risk_age(q["applied"], q["begin"], q["birth"], month // 12)
+    return at_risk * qx[(q["table"], q["sex"], age)] / 12 * q["risk_factor"]
 
 
 def project(q, qx):

@@ -74,9 +74,9 @@ def illustration_rate(legacy_dir, date):
 def agreed_rate(legacy_dir, policy, fee_type, date):
     """Individually agreed ENT/AMC rate of a policy valid on `date`, or None (NRAGRE).
 
-    While an agreement is valid its rate replaces the tariff rate; prepared for t3/t4.
+    While an agreement is valid its rate replaces the tariff rate (t3/t4 ask once per premium and charge run).
     """
-    rows = [r for r in table(legacy_dir, "NRAGRE") if (r["AG_POLNR"], r["AG_FEETP"]) == (policy, fee_type)]
+    rows = [r for r in grouped(legacy_dir, "NRAGRE", "AG_POLNR").get(policy, []) if r["AG_FEETP"] == fee_type]
     return next((number(r["AG_RATE"], 6) for r in reversed(valid_on(rows, "AG_", date))), None)
 
 

@@ -225,7 +225,6 @@ legacy/
 targets/
 *.parquet
 *.csv
-!**/reports/**/*.csv
 .cache/
 __pycache__/
 *.pyc

@@ -1,0 +1,28 @@
+  0/3014 = 0.0000%  {'rounding': 'half_up', 'monthly_rate': 'geometric', 'param_date': 'begdt', 'risk_age': 'floor'}
+  0/3014 = 0.0000%  {'rounding': 'truncate', 'monthly_rate': 'geometric', 'param_date': 'begdt', 'risk_age': 'floor'}
+  0/3014 = 0.0000%  {'rounding': 'era', 'monthly_rate': 'geometric', 'param_date': 'begdt', 'risk_age': 'floor'}
+  1092/3014 = 36.2309%  {'rounding': 'half_up', 'monthly_rate': 'r_over_12', 'param_date': 'begdt', 'risk_age': 'floor'}
+  -> keep monthly_rate = 'r_over_12'
+  1132/3014 = 37.5581%  {'rounding': 'half_up', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'floor'}
+  -> keep param_date = 'appdt'
+  2183/3014 = 72.4287%  {'rounding': 'half_up', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'}
+  -> keep risk_age = 'nearest'
+  807/3014 = 26.7750%  {'rounding': 'truncate', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'}
+  2989/3014 = 99.1705%  {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'}
+  -> keep rounding = 'era'
+  0/3014 = 0.0000%  {'rounding': 'era', 'monthly_rate': 'geometric', 'param_date': 'appdt', 'risk_age': 'nearest'}
+  2907/3014 = 96.4499%  {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'begdt', 'risk_age': 'nearest'}
+  1547/3014 = 51.3271%  {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'floor'}
+
+best: {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'} 2989/3014 = 99.1705%
+*   1       0/3014     0.0000%    6.6s {'rounding': 'half_up', 'monthly_rate': 'geometric', 'param_date': 'begdt', 'risk_age': 'floor'}
+    2       0/3014     0.0000%    5.8s {'rounding': 'truncate', 'monthly_rate': 'geometric', 'param_date': 'begdt', 'risk_age': 'floor'}
+    3       0/3014     0.0000%    5.9s {'rounding': 'era', 'monthly_rate': 'geometric', 'param_date': 'begdt', 'risk_age': 'floor'}
+*   4    1092/3014    36.2309%    5.8s {'rounding': 'half_up', 'monthly_rate': 'r_over_12', 'param_date': 'begdt', 'risk_age': 'floor'}
+*   5    1132/3014    37.5581%    5.8s {'rounding': 'half_up', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'floor'}
+*   6    2183/3014    72.4287%    5.7s {'rounding': 'half_up', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'}
+    7     807/3014    26.7750%    5.7s {'rounding': 'truncate', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'}
+*   8    2989/3014    99.1705%    5.8s {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'nearest'}
+    9       0/3014     0.0000%    5.9s {'rounding': 'era', 'monthly_rate': 'geometric', 'param_date': 'appdt', 'risk_age': 'nearest'}
+   10    2907/3014    96.4499%    5.9s {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'begdt', 'risk_age': 'nearest'}
+   11    1547/3014    51.3271%    5.9s {'rounding': 'era', 'monthly_rate': 'r_over_12', 'param_date': 'appdt', 'risk_age': 'floor'}

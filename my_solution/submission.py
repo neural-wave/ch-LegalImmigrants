@@ -1,8 +1,9 @@
-"""Submission of the Neuron migration challenge: one thin function per task, the rules live in t0.py, t1.py, t2.py.
+"""Submission of the Neuron migration challenge: one thin function per task, the rules live in t0.py .. t4.py.
 
 Shared helpers: loader.py (cached CSV reader), dates.py (CYYMMDD, month arithmetic, COBOL/Java eras, Ticino
-business days) and params.py (parameter lookups as of a date). Dates are `datetime.date`, amounts are
-`decimal.Decimal`; standard library only.
+business days), params.py (parameter lookups as of a date), market.py (prices, fx), bookings.py / charges.py /
+accounting.py (the fund accounting behind t3 and t4). Dates are `datetime.date`, amounts are `decimal.Decimal`;
+standard library only.
 """
 import datetime as dt
 from decimal import Decimal
@@ -10,6 +11,8 @@ from decimal import Decimal
 import t0
 import t1
 import t2
+import t3
+import t4
 
 
 def t0_commission(legacy_dir) -> dict[tuple[str, int], Decimal]:
@@ -29,14 +32,17 @@ def t2_projected_maturity_value(legacy_dir) -> dict[str, Decimal]:
 
 def t3_surrender_value(legacy_dir, valuation_dates: list[dt.date]) -> dict[tuple[str, dt.date], Decimal]:
     """{(policy_id, valuation_date): surrender_value}"""
-    return {}  # TODO: unit holdings (NRBOOK/NRFPRC) and surrender scale (NRSURR/NRWAIV) not reconstructed yet
+    return t3.solve(legacy_dir, valuation_dates)
 
 
 def t4_annual_statement(legacy_dir) -> dict[tuple[str, int], tuple[Decimal, ...]]:
     """{(policy_id, year): (premiums, entry_charges, admin_fees, management_fees, risk_charges, total_charges)}"""
-    return {}  # TODO: calendar-year statement from the monthly charge run (event 300) not reconstructed yet
+    return t4.solve(legacy_dir)
 
 
 def t5_outlier_detection(legacy_dir, targets_dir) -> set[tuple[str, object]]:
     """{(task, key)} of the values that were changed by hand (the only function allowed to read targets)."""
-    return set()  # TODO: compare the rule results with `targets_dir` once t3/t4 are in place
+    import t5  # rule residuals + shape checks + NREXCP, see t5.py
+    rules = {"t0_commission": t0_commission, "t2_projected_maturity_value": t2_projected_maturity_value,
+             "t3_surrender_value": t3_surrender_value, "t4_annual_statement": t4_annual_statement}
+    return t5.solve(legacy_dir, targets_dir, rules)
