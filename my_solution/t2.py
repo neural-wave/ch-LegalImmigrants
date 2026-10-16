@@ -50,7 +50,7 @@ def risk_charge(q, qx, value, month):
     benefit = {"A": value * Decimal("1.01"), "B": max(q["sum_insured"], value), "C": value + q["sum_insured"]}
     at_risk = max(benefit[q["option"]] - value, Decimal(0))
     age = risk_age(q["applied"], q["begin"], q["birth"], month // 12)
-    return at_risk * qx[(q["table"], q["sex"], age)] / 12 * q["risk_factor"]
+    return at_risk * qx[(q["table"], q["sex"], age)] * q["risk_factor"] / 12  # divide last (tariff.risk_charge)
 
 
 def project(q, qx):

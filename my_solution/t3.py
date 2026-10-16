@@ -3,18 +3,21 @@
 Rules found:
 - policy value = sum over fund/pots of units x last bid price on or before the valuation date / fx ratio of
   that date, each fund/pot rounded to the cent by the era of the VALUATION date (2006-12-31 truncates);
-- surrender value = policy value minus the penalty of the product's surrender scale (NRSURR) for the completed
-  policy years since the start date, the penalty rounded half up; no penalty in a NRWAIV period;
+- a policy whose charges exceed its holdings is worth 0, never a negative amount;
+- surrender value = policy value x (1 - penalty rate), rounded by the era of the valuation date (COBOL
+  truncates, Java rounds half up); the rate comes from the product's surrender scale (NRSURR) for the
+  completed policy years since the start date; no penalty in a NRWAIV period;
 - a policy surrendered (state 60) or ended by death (state 70) on the valuation date has value 0.
 """
 import functools
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal
 
 from accounting import ledger
 from dates import day
 from loader import by_key, grouped, number, table
 from market import CENT, fx_ratio, price, rounded
 from params import first_version, policy_version, valid_on
+from tariff import policy_year
 
 ZERO = Decimal(0)
 
@@ -26,7 +29,7 @@ def policy_value(legacy_dir, policy, date):
         bid, fx = price(legacy_dir, fund, date), fx_ratio(legacy_dir, currency, fund, date)
         if units and bid and fx:  # a fund without a price yet adds nothing
             total += rounded(units * bid / fx, CENT, date)
-    return total
+    return max(total, ZERO)
 
 
 @functools.lru_cache(maxsize=None)
@@ -40,19 +43,18 @@ def penalty_rate(legacy_dir, policy, date):
     if valid_on(table(legacy_dir, "NRWAIV"), "WV_", date):
         return ZERO
     head = first_version(legacy_dir, policy)
-    begin = day(head["PH_BEGDT"])
-    years = date.year - begin.year - ((date.month, date.day) < (begin.month, begin.day))
+    years = policy_year(day(head["PH_BEGDT"]), date)
     scale = int(by_key(legacy_dir, "NRPROD", "PD_PRDCD")[head["PH_PRDCD"]]["PD_SRPSCL"])
     return scales(legacy_dir).get((scale, years), ZERO)
 
 
 def surrender_value(legacy_dir, policy, date):
-    """Policy value minus the penalty; 0 once the policy is surrendered or the insured has died."""
+    """Policy value net of the penalty; 0 once the policy is surrendered or the insured has died."""
     version = policy_version(legacy_dir, policy, date)
     if version is not None and version["PH_STATE"] in ("60", "70"):
         return ZERO
     value = policy_value(legacy_dir, policy, date)
-    return value - (value * penalty_rate(legacy_dir, policy, date)).quantize(CENT, ROUND_HALF_UP)
+    return rounded(value * (1 - penalty_rate(legacy_dir, policy, date)), CENT, date)
 
 
 def solve(legacy_dir, valuation_dates):

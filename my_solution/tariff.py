@@ -5,8 +5,8 @@ Rules found:
   (key positions 1-2) and generation (positions 4-5) valid on the trade date;
 - an agreed AMC rate (NRAGRE) valid on the trade date replaces the rates of both pots;
 - AMC: pot 1 at CG_AMCP1, pot 2 at CG_AMCP2; Java: value x rate / 12 rounded half up; COBOL pro rata
-  temporis: value x rate x days / 360 truncated, days since the previous run (the first run counts from the
-  policy start date);
+  temporis: value x rate x days / 360 truncated, days since the previous run; the first run counts from the
+  monthly anniversary before it, even when the policy started earlier (first premium paid late);
 - RSK: sum at risk x qx / 12 x (1 + loading) x smoker factor; sum at risk by death benefit option: A 1 % of
   the value, B sum insured minus value (at least 0), C the sum insured;
 - risk: sum insured, death benefit option (key position 7) and medical loading from NRRISK, the smoker
@@ -21,7 +21,7 @@ import functools
 from decimal import Decimal
 
 from ages import risk_age
-from dates import day, is_legacy, raw_day
+from dates import add_months, day, is_legacy, raw_day
 from loader import by_key, number, table
 from market import CENT, rounded
 from params import agreed_rate, charges, first_version
@@ -42,8 +42,9 @@ def mortality(legacy_dir):
 
 def policy_year(begin, traded):
     """Completed policy years at the last anniversary on or before `traded` (0 in the first year)."""
-    # the anniversary of this year only if (month, day) of the trade date has reached the start's
-    return traded.year - begin.year - ((traded.month, traded.day) < (begin.month, begin.day))
+    # the anniversary of a 29 February start falls on 28 February in common years, like the charge run
+    years = traded.year - begin.year
+    return years - (traded < add_months(begin, 12 * years, begin.day))
 
 
 def parameters(legacy_dir, policy, traded, previous):
@@ -60,7 +61,9 @@ def parameters(legacy_dir, policy, traded, previous):
     age = risk_age(day(head["PH_APPDT"]), begin, raw_day(person["PS_BIRTH"]), policy_year(begin, traded))
     # an age outside the mortality table means no risk charge
     qx = mortality(legacy_dir).get((charge["CG_MORTTB"], sex, age), ZERO)
-    return Run(head["PH_CCY"], (traded - (previous or begin)).days, number(charge["CG_ADMFEE"], 2),
+    # the first run counts its days from the anniversary one month back (on the start's day of month)
+    since = previous or add_months(traded, -1, begin.day)
+    return Run(head["PH_CCY"], (traded - since).days, number(charge["CG_ADMFEE"], 2),
                number(charge["CG_AMCP1"], 6), number(charge["CG_AMCP2"], 6),
                agreed_rate(legacy_dir, policy, "AMC", traded), key[6], number(risk["RK_SUMIN"], 2),
                (1 + number(risk["RK_LOAD"], 6)) * smoker, qx)
@@ -74,4 +77,5 @@ def management_fee(value, rate, days, date):
 def risk_charge(value, run, date):
     """Monthly risk charge on the sum at risk of the death benefit option (A 1 %, B shortfall, C sum insured)."""
     at_risk = {"A": value / 100, "B": max(run.sum_insured - value, ZERO), "C": run.sum_insured}[run.option]
-    return rounded(at_risk * run.qx / 12 * run.factor, CENT, date)
+    # divide last: 6875 x 0.00368 / 12 x 3 is 6.32499... in 28-digit Decimal, but the system got 6.325 -> 6.33
+    return rounded(at_risk * run.qx * run.factor / 12, CENT, date)

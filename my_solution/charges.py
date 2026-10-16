@@ -8,7 +8,9 @@ Rules found:
 - RSK: one risk charge on the value left after ADM and AMC (the cent values minus the amounts, formula in
   tariff.py), split like ADM;
 - pro-rata shares are rounded one by one in the era of the run, the largest value absorbs the residual,
-  and a share of 0.00 books nothing (a second row of the same pot books 0).
+  and a share of 0.00 books nothing (a second row of the same pot books 0);
+- a split never takes more than there is: an admin fee or risk charge above the value left is capped at it
+  (every pot then pays exactly what it holds); the AMC is not capped, it may leave a pot a cent short.
 """
 from decimal import Decimal
 
@@ -23,6 +25,7 @@ def split(total, values, date):
     base = sum(values, ZERO)
     if base <= 0:  # nothing to split over: no shares at all
         return [ZERO] * len(values)
+    total = min(total, base)  # capped at what the pots hold
     shares = [rounded(total * v / base, CENT, date) for v in values]
     largest = max(range(len(values)), key=lambda i: values[i])
     shares[largest] = total - sum(shares, ZERO) + shares[largest]

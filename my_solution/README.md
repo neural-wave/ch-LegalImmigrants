@@ -33,9 +33,9 @@ python check.py --submission my_solution --tasks t0_commission t1_next_due_dates
 
 ## Rules found so far
 
-Train accuracy: t0 99.996 %, t1 100 %, t2 99.01 %, t3 96.05 %, t4 97.56 % (the train targets contain the
-manual corrections of t5, so a perfect rule set scores slightly below 100 %). All five tasks run in about
-40 s with a peak of 2.1 GB RAM.
+Train accuracy: t0 99.996 %, t1 100 %, t2 99.74 %, t3 99.64 %, t4 99.92 % (the train targets contain the
+manual corrections of t5: whole-franc differences on policies mostly listed in NREXCP, so a perfect rule set
+scores slightly below 100 %). All five tasks run in about 40 s with a peak of 2.1 GB RAM.
 
 **Era split.** Neuron was converted from COBOL to Java on the weekend of 2007-08-11/12 (event type 800,
 dated 2007-08-11). The COBOL era (up to 2007-08-10) truncates amounts to the cent, the Java era rounds half up.
@@ -65,14 +65,18 @@ premium x (1 - entry rate) x allocation share to the cent, units = amount x fx /
 before the trade date), parameters as of the money date. Charge run (one event, order ADM -> AMC -> RSK):
 every fund/pot valued at units x bid / fx to the cent; the admin fee is split over all fund/pots pro rata by
 value (largest absorbs the residual, 0.00 shares are not booked); AMC per pot, Java value x rate / 12 half up,
-COBOL value x rate x days / 360 truncated (days since the previous run); the risk charge
-`sum at risk x qx / 12 x (1 + loading) x smoker` on the value left after ADM and AMC, split like ADM.
-Units sold = amount x fx / bid to 6 decimals. Every rounding follows the era of the trade date.
+COBOL value x rate x days / 360 truncated (days since the previous run; the first run counts from the monthly
+anniversary before it, not from the start date); the risk charge `sum at risk x qx x (1 + loading) x smoker
+/ 12` on the value left after ADM and AMC, split like ADM. A split never takes more than the pots hold (the
+admin fee and risk charge of an almost empty policy are capped). Policy anniversaries of a 29 February start
+fall on 28 February. Units sold = amount x fx / bid to 6 decimals. Every rounding follows the era of the
+trade date.
 
 **t3 surrender value.** Policy value = sum over fund/pots of units x bid / fx on the valuation date, each
-rounded to the cent in the era of the *valuation* date (2006-12-31 truncates). Penalty = NRSURR rate of the
-product's scale by completed policy years since the start date, rounded half up, none in a NRWAIV period;
-0 for policies in state 60/70 on the valuation date.
+rounded to the cent in the era of the *valuation* date (2006-12-31 truncates), never below 0. Surrender
+value = policy value x (1 - NRSURR rate of the product's scale by completed policy years since the start
+date), rounded in the era of the valuation date (COBOL truncates, Java half up); no penalty in a NRWAIV
+period; 0 for policies in state 60/70 on the valuation date.
 
 **t4 annual statement.** Years from the start year to the year of the first version in state 60/70, at the
 latest 2025. Premiums = items in state P by money date; entry charges = premium x share - invested amount
