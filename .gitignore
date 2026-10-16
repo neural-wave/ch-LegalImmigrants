@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Challenge data is shared separately and should stay local
+/LifewareChallenge/participants/**/*.csv
+
 # C extensions
 *.so
 
