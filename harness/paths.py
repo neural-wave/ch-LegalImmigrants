@@ -11,6 +11,5 @@ LIFEWARE = REPO.parent
 DATA = REPO / "data" if (REPO / "data").exists() else LIFEWARE / "data"
 LEGACY = DATA / "legacy"
 TARGETS = DATA / "targets"
-STARTER_KIT = DATA / "starter_kit"
 SUBMISSION = REPO / "my_solution"
 REPORTS = HARNESS / "reports"
