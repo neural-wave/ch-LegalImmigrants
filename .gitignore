@@ -221,3 +221,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Hackathon: partner data never goes into the public repo
+data/
+legacy/
+targets/
+*.parquet
+*.csv
+.cache/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

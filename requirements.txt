@@ -1,0 +1,8 @@
+# The submission (my_solution/) is standard library only: see my_solution/requirements.txt.
+# These packages are for the rule-finding tool (harness/) and the local maintainability check.
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+scikit-learn>=1.3
+ruptures>=1.1
+radon>=6.0
