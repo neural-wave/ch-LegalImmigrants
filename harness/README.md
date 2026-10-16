@@ -1,7 +1,6 @@
 # harness: the rule-finding tool
 
-Generic tooling to find the hidden rules of a task of the Neuron migration challenge (see the opening briefing,
-section 4 of `brief.md`). It is **not part of the submission**: it reads the target files, which submitted code must
+Generic tooling to find the hidden rules of a task of the Neuron migration challenge. It is **not part of the submission**: it reads the target files, which submitted code must
 never do. It works for any task t0-t4 because it only relies on `scoring.py` and the legacy tables.
 
 | Module | What it does |
@@ -12,14 +11,14 @@ never do. It works for any task t0-t4 because it only relies on `scoring.py` and
 | `search.py` | `search(task, build_fn, space)`: greedy coordinate search over named rule variants; configs are plain dicts, so a new idea is one more entry in `space`. Logs every trial. |
 | `report.py` | saves `report.md`, `mismatches.csv` and PNGs (mismatch rate by application date / row date, diff histogram) in `reports/<task>/`. |
 | `cli.py` | command line, see below. |
-| `demo_t2.py`, `demo_search_t2.py` | demos on t2 with the exploration rules of `analiza/t2_recon.py`. |
+| `demo_t2.py`, `demo_search_t2.py` | demos on t2 with the rules of our exploration script `t2_recon.py` (kept outside the repository with the data; `reports/t2/` holds their output). |
 
 ## Usage
 
-From `repo/` with the project interpreter:
+From the repository root (`pip install -r requirements.txt` first):
 
 ```
-python -m harness.cli evaluate t2 --submission ../my_solution --legacy ../../data/legacy --targets ../../data/targets
+python -m harness.cli evaluate t2 --submission my_solution --legacy <path>/legacy --targets <path>/targets
 python -m harness.cli evaluate t0 --predictions harness/reports/t0/predictions.csv   # a target-shaped CSV instead
 python -m harness.demo_t2             # t2 with the t2_recon rules -> reports/t2/
 python -m harness.demo_search_t2      # hill-climb from a wrong configuration to the known rules
