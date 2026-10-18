@@ -204,6 +204,7 @@ cd LifewareChallenge/participants/starter_kit && python check.py --submission my
 | `  …/my_solution/tasks/` | one module per task |
 | `tests/` | the readiness checks: scores, runtime, memory, other dates, exports with missing rows |
 | `report/main.pdf` | the 3-page report |
+| `report/video_link.txt` | link to the 2-minute video |
 
 ## Team
 
