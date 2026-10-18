@@ -207,13 +207,7 @@ cd LifewareChallenge/participants/starter_kit && python check.py --submission my
 
 ## Team
 
-| Name | Role |
-|---|---|
-| Amar Omerovic | [role] |
-| Uzair Naeem | [role] |
-| Aanchal Aanchal | [role] |
-| Davide Frosi | [role] |
-| Fatih Tkin | [role] |
+Amar Omerovic, Uzair Naeem, Aanchal Aanchal, Davide Frosi, Fatih Tkin.
 
 We built this utilizing agentic AI. Several AI agents worked in parallel on separate tasks, and one coordinating agent
 checked every result by rerunning it before anything was accepted. We directed the work, made the decisions and
