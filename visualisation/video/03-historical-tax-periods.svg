@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="648pt" viewBox="0 0 1152 648" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-18T10:40:21.989320</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 648 
+L 1152 648 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #0d1522"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 138.24 486 
+L 737.28 486 
+L 737.28 187.92 
+L 138.24 187.92 
+z
+" style="fill: #0d1522"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 18.45px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="213.652256" y="507.017676" transform="rotate(-0 213.652256 507.017676)">12.5%</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 18.45px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="437.76" y="507.017676" transform="rotate(-0 437.76 507.017676)">20%</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+     <g id="text_3">
+      <text style="font-size: 18.45px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="661.867744" y="507.017676" transform="rotate(-0 661.867744 507.017676)">26%</text>
+     </g>
+    </g>
+    <g id="text_4">
+     <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="437.76" y="533.911438" transform="rotate(-0 437.76 533.911438)">Rate in each period</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2"/>
+   <g id="line2d_4">
+    <path d="M 138.24 405.618876 
+L 737.28 405.618876 
+" clip-path="url(#pdb9332872f)" style="fill: none; stroke: #a5b3c4; stroke-width: 1.64; stroke-linecap: square"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 165.469091 405.618876 
+L 261.835421 405.618876 
+L 261.835421 271.650337 
+L 165.469091 271.650337 
+z
+" clip-path="url(#pdb9332872f)" style="fill: #9dbfea"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 389.576835 405.618876 
+L 485.943165 405.618876 
+L 485.943165 439.111011 
+L 389.576835 439.111011 
+z
+" clip-path="url(#pdb9332872f)" style="fill: #ed8585"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 613.684579 405.618876 
+L 710.050909 405.618876 
+L 710.050909 238.158202 
+L 613.684579 238.158202 
+z
+" clip-path="url(#pdb9332872f)" style="fill: #9dbfea"/>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 22.55px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="213.652256" y="254.510805" transform="rotate(-0 213.652256 254.510805)">+80</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 22.55px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="437.76" y="467.965973" transform="rotate(-0 437.76 467.965973)">-20</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 22.55px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="661.867744" y="221.01867" transform="rotate(-0 661.867744 221.01867)">+100</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a5b3c4" x="66.3552" y="158.112" transform="rotate(-0 66.3552 158.112)">Gain</text>
+   </g>
+  </g>
+  <g id="text_9">
+   <text style="font-size: 34.85px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #edf2f7" x="97.92" y="77.76" transform="rotate(-0 97.92 77.76)">Timing changes the tax</text>
+  </g>
+  <g id="text_10">
+   <text style="font-size: 59.45px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #70d5bd" x="875.52" y="246.24" transform="rotate(-0 875.52 246.24)">32</text>
+  </g>
+  <g id="text_11">
+   <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #edf2f7" x="875.52" y="291.6" transform="rotate(-0 875.52 291.6)">Period tax</text>
+  </g>
+  <g id="text_12">
+   <text style="font-size: 49.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a5b3c4" x="875.52" y="414.72" transform="rotate(-0 875.52 414.72)">41.60</text>
+  </g>
+  <g id="text_13">
+   <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #edf2f7" x="875.52" y="460.08" transform="rotate(-0 875.52 460.08)">Final-rate tax</text>
+  </g>
+  <g id="text_14">
+   <text style="font-size: 14.76px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a5b3c4" x="97.92" y="612.36" transform="rotate(-0 97.92 612.36)">Illustrative · invented gain units</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pdb9332872f">
+   <rect x="138.24" y="187.92" width="599.04" height="298.08"/>
+  </clipPath>
+ </defs>
+</svg>

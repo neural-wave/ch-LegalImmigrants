@@ -1,0 +1,2 @@
+policy_id,event_nr,country,taxable_base,withholding,surcharges,stamp_duty,remittance_date
+BL10000086,121,DE,5628.16,1407.04,77.38,0.00,2006-08-10

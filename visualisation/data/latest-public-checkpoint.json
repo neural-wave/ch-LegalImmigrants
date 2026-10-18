@@ -1,0 +1,21 @@
+{
+  "source": "User-supplied screenshot, 2026-10-18",
+  "screenshot_path": "/var/folders/_z/j243pz8d4yx408828gnjxpph0000gn/T/codex-clipboard-ded0e1d7-85c8-4970-97c5-23e01256487f.png",
+  "upload": 82,
+  "evaluated": "2026-10-18 09:51 Europe/Zurich",
+  "original_scored_tasks": "t0-t4 each 100%",
+  "payout": {
+    "correct": 9,
+    "total": 40
+  },
+  "annual": {
+    "correct": 27,
+    "total": 30
+  },
+  "average_percent": 87.5,
+  "maintainability": 83.6,
+  "organizer_notice": "Third t7 target set; first two sets released; third may contain different payouts/years. Leaderboard frozen.",
+  "commit_mapping": null,
+  "status": "Provisional; another run planned",
+  "team_clarification": "Through upload #26, focus was on original tasks, excluding task 7."
+}

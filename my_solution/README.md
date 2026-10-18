@@ -1,102 +1,101 @@
-# Neuron migration challenge - submission
+# my_solution: approach and rules
 
-Reconstruction of the undocumented calculation rules of Neuron, the legacy policy administration system of
-NeuralWave Life, from its data extract (`legacy/`). Pure Python 3.12 standard library: amounts are
-`decimal.Decimal`, dates are `datetime.date`, nothing is cached on disk and `targets/` is never read.
+`submission.py` only re-exports the six task functions. Each task is one module in `tasks/`. The shared engine is in
+`neuron/`, with one small module per rule. Each module's docstring says why the rule works the way it does.
 
-## How to run
+Every value is calculated from `legacy_dir`. Only t5 reads `targets_dir`, as the challenge allows. There are no
+dependencies. The code runs on the Python 3.10+ standard library, so `requirements.txt` is empty on purpose.
 
-```bash
-python check.py --submission my_solution --legacy ../data/legacy --targets ../data/targets
-# only some tasks:
-python check.py --submission my_solution --tasks t0_commission t1_next_due_dates t2_projected_maturity_value
-```
+## Approach in short
 
-`requirements.txt` is empty on purpose; `pip install radon` is only needed to print the maintainability index.
+For each task we decided what one row is, which rows count and what the formula is. Then we tested the choice
+points: which date, which rounding, which version of the policy. We found the rules offline with the tools in `lab/`
+at the repo root (a diff tool, a decision tree on the wrong rows, and a search over choice points that is checked on
+a 20% hold-out). A rule only moved into this folder once it was short, readable and proven on the data. The code here
+has no machine learning, no AI calls and no target values.
 
-## Layout
+The whole engine follows three habits.
 
-| File | Content |
-|---|---|
-| `submission.py` | the entry points `t0_...` to `t5_...`, one line each, delegating to the task modules |
-| `loader.py` | cached `csv.DictReader` over the legacy tables, trimmed fields, `N(s)` -> `Decimal` |
-| `dates.py` | `CYYMMDD` decoding, month arithmetic with an anchor day, COBOL/Java era, Ticino business days |
-| `params.py` | "as of date" lookups: policy versions, NRCHRG, NRENTC, NRCOMR, NRILLU, NRAGRE, NRALLO |
-| `market.py` | NRFPRC prices (latest publication, last price <= date), NRFXRT ratios, era rounding to cent / unit |
-| `bookings.py` | streams NRBOOK policy by policy (6.8 M rows, never all in memory), drops reversed / 990 events |
-| `premiums.py` | the blank PRM columns: invested amount, units and entry charge of a premium booking |
-| `tariff.py` | parameters and formulas of a charge run: NRCHRG, agreed AMC, age / qx, AMC and risk formulas |
-| `charges.py` | the monthly charge run: valuation, ADM -> AMC -> RSK, pro-rata splits, units sold |
-| `accounting.py` | the replay in trade-date order; keeps holdings per date (t3) and amounts per year (t4) |
-| `ages.py` | risk age: COBOL entry age + policy years, Java nearest birthday in whole months (t2, t3, t4) |
-| `t0.py` .. `t4.py` | the rules of each task (module docstring = list of rules found) |
+- **Money is `Decimal`**, never a float. Fixed-point columns are decoded once (`neuron/fixed_point.py`).
+- **Every rate comes from a parameter table by date.** `as_of(rows, prefix, day)` picks the row valid on that day,
+  highest version first (`neuron/as_of.py`). For example, the admin fee is 6.50 until 2022 and 8.00 from 2023.
+- **Two eras.** Each policy's event 800 (11 August 2007) marks the switch from COBOL to Java Neuron
+  (`neuron/contract.py`). COBOL cuts off cents and units (12.349 → 12.34), and Java rounds half up (12.35). This is the
+  only date where the rules change.
 
-## Rules found so far
+`guarded()` (`neuron/data.py`) skips a policy with incomplete data, so one broken row never stops a whole task.
 
-Train accuracy: t0 99.996 %, t1 100 %, t2 99.74 %, t3 99.64 %, t4 99.92 % (the train targets contain the
-manual corrections of t5: whole-franc differences on policies mostly listed in NREXCP, so a perfect rule set
-scores slightly below 100 %). All five tasks run in about 40 s with a peak of 2.1 GB RAM.
+## Rules per task
 
-**Era split.** Neuron was converted from COBOL to Java on the weekend of 2007-08-11/12 (event type 800,
-dated 2007-08-11). The COBOL era (up to 2007-08-10) truncates amounts to the cent, the Java era rounds half up.
+### t0 Commission (`tasks/t0_commission.py`)
+1. Only premium items with state `P` (paid) earn a commission.
+2. Commission = premium received × rate, rounded half up to the cent. Example: BL10000013 pays €315, its broker is in
+   tier B, the regular-premium rate is 3%, so €9.45.
+3. The rate is looked up by the tier of the broker in the policy version valid on the **money date** (`PR_RCVDT`),
+   and by `E` for single-premium policies, `L` for the others.
 
-**t0 commission.** `amount received x rate(broker tier, premium type)`, rounded half up to the cent. The
-broker comes from the policy version valid on the money received date, the premium type (L/E) from position 6
-of the tariff key. Items without money and items whose booking event was reversed (event type 900) are not
-counted.
+### t1 Next due dates (`tasks/t1_next_due_dates.py`, `neuron/calendar/`)
+1. Policies in state 10 with a regular frequency (M, Q, H, J), in the version valid on the extract date.
+2. Step from the start date: M 1, Q 3, H 6, J 12 months. No due date on or after maturity.
+3. COBOL era: next due = last due + step, clamped to the month end, so the day "sticks" (31 Jan → 28 Feb → 28 Mar).
+   Java era: the day of the first due date after the conversion is kept for good (clamped per month only).
+4. Collection: bank transfer (UB) = due date, even on a weekend. Direct debit (LS) = next business day.
+5. Business days: Monday–Friday minus canton Ticino's 15 public holidays: 1 and 6 Jan, 19 Mar, Easter Monday, 1 May,
+   Ascension, Whit Monday, Corpus Christi, 29 Jun, 1 and 15 Aug, 1 Nov, 8, 25 and 26 Dec. **No Good Friday.** The
+   same calendar for every currency. Easter is computed (`neuron/calendar/easter.py`), so it works for any year.
 
-**t1 next due dates.** Version valid on the extract date, state 10, frequency M/Q/H/J. Due dates are
-start date + k x frequency months with the day clamped to the month length; COBOL-era policies keep the day
-of their last pre-conversion due date as anchor. Horizon: one year after the extract date, before maturity.
-Direct debit (LS) collects on the next Ticino business day, other methods on the due date.
+### t2 Projected maturity value (`tasks/t2_projected_maturity_value.py`, `neuron/offer/`)
+1. The offer treats the policy as one amount, simulated month by month from the start to the maturity date, with all parameters as of the
+   **application date** and the first policy version.
+2. Each month: + premium × (1 − entry rate) on premium months → − admin fee → − value × management rate / 12 →
+   − risk charge → × (1 + growth rate / 12). Every step is rounded to the cent (cut off in the COBOL era).
+3. Growth is r / 12 per month, not (1 + r)^(1/12). The management rate is the base-unit rate `CG_AMCP2`.
+4. Risk = sum at risk × qx(age) × (1 + loading) × smoker factor (only if `PS_SMOKE = J`) / 12. Sum at risk by death
+   benefit option: A 1% of the value, B max(sum insured − value, 0), C the sum insured.
+5. Age = entry age + completed policy years. Java entry age: nearest birthday in whole months
+   ((months + 6) // 12). COBOL entry age: round(days since birth / 365).
+6. Some birth dates don't exist (1954-11-31). They are kept as numbers, never turned into a date.
 
-**t2 projected maturity value.** Replay of the offer projection with the parameters valid on the
-application date of version 1 (charges by tariff family/generation, entry charge by broker tier,
-illustration rate; no individual agreements). Monthly loop: premium net of entry charge, admin fee,
-management charge AMCP2/12, risk charge on the sum at risk (`qx/12 x (1 + loading) x smoker factor`), growth
-at rate/12; each step rounded by the era of the application. **Risk age** (shared by t2 and the charge run,
-`ages.risk_age`): offers applied for in the COBOL era use the entry age (nearest birthday from calendar
-days / 365, impossible birth days clipped to the month end) plus the completed policy years, for their
-whole life; Java offers use the nearest birthday in whole months at the anniversary.
+### t3 Surrender value (`tasks/t3_surrender_value.py`, `neuron/funds/`)
+1. Replay `NRBOOK` per policy, one trade (one event on one trade date) at a time, sorted by trade date with **the
+   monthly charge run first on its day**. Reversed events and technical corrections (990) are skipped. Customer
+   orders (switches, withdrawals, surrenders, deaths) keep their exported units.
+2. Premium: amount per fund = round(premium × (1 − entry rate) × allocation share), with the rates and allocation of
+   the money date. Units = amount × FX / ask price. The FX is the rate of the **day before the trade date**.
+3. FX = CHF rate of the policy currency / CHF rate of the fund currency, never rounded. Currency codes are upper-cased
+   (`usd` appears in the table).
+4. Charge run: the value of every pot the policy holds (also those without a booking row) at the bid price. Admin fee
+   = min(fee, value), shared by value: each share rounded, the largest pot takes the remainder. Management charge per
+   pot = value × rate × period: Java 1/12, COBOL days since the previous monthly anniversary / 360 (Act/360).
+   Risk charge on the value left after admin and management, at most that value.
+5. Risk charge as in t2, with the age at the last policy anniversary (a 29 Feb start has its anniversary on 28 Feb).
+6. Surrender value = Σ per pot cents(units × last bid / FX) × (1 − surrender penalty of the completed policy years),
+   with no penalty inside a waiver period (`NRWAIV`). The value is 0 for surrendered or dead policies (state 60/70)
+   and never below 0.
 
-**Fund accounting (t3, t4).** NRBOOK is replayed per policy in trade-date order (charge run before the
-customer orders of the same day). Bookings of reversed (900) and 990 events do not count. PRM: amount =
-premium x (1 - entry rate) x allocation share to the cent, units = amount x fx / ask price (fx of the day
-before the trade date), parameters as of the money date. Charge run (one event, order ADM -> AMC -> RSK):
-every fund/pot valued at units x bid / fx to the cent; the admin fee is split over all fund/pots pro rata by
-value (largest absorbs the residual, 0.00 shares are not booked); AMC per pot, Java value x rate / 12 half up,
-COBOL value x rate x days / 360 truncated (days since the previous run; the first run counts from the monthly
-anniversary before it, not from the start date); the risk charge `sum at risk x qx x (1 + loading) x smoker
-/ 12` on the value left after ADM and AMC, split like ADM. A split never takes more than the pots hold (the
-admin fee and risk charge of an almost empty policy are capped). Policy anniversaries of a 29 February start
-fall on 28 February. Units sold = amount x fx / bid to 6 decimals. Every rounding follows the era of the
-trade date.
+### t4 Annual statement (`tasks/t4_annual_statement.py`)
+1. The same replay as t3 (run once and shared).
+2. Premiums by money date. Entry charges per fund in the year of that fund's trade date (a premium paid on 30 Dec can
+   trade one fund on 31 Dec and another on 2 Jan). Admin, management and risk charges by trade date.
+3. Years from the start year to the year of state 60/70, at most 2025. Total = entry + admin + management + risk.
 
-**t3 surrender value.** Policy value = sum over fund/pots of units x bid / fx on the valuation date, each
-rounded to the cent in the era of the *valuation* date (2006-12-31 truncates), never below 0. Surrender
-value = policy value x (1 - NRSURR rate of the product's scale by completed policy years since the start
-date), rounded in the era of the valuation date (COBOL truncates, Java half up); no penalty in a NRWAIV
-period; 0 for policies in state 60/70 on the valuation date.
+### t5 Hand edits (`tasks/t5_outlier_detection.py`)
+1. Our working rule: a manual correction moves one value by a **whole, non-zero amount**, while a missing rule
+   leaves odd cents.
+2. t0 and t2: compare the target with our task function. t3: compare the target surrender value with the target
+   policy value after the penalty. t4: compare the target admin fees with the tariff fee × the charge runs of the year.
+3. On train this flags 54 rows. 38 are all the `NREXCP` entries that have train targets. The other 16 are not listed
+   but move by whole euros in the same way, so we believe they are unlisted edits.
 
-**t4 annual statement.** Years from the start year to the year of the first version in state 60/70, at the
-latest 2025. Premiums = items in state P by money date; entry charges = premium x share - invested amount
-of each PRM booking by its trade date; admin / management / risk = charge amounts by trade date;
-total = entry + admin + management + risk.
+## Results on train (official `check.py`)
 
-**t5.** See `t5.py`.
+| Task | Raw score | Estimated, hand edits excluded |
+|---|---|---|
+| t0 | 99.9956% (225,848 / 225,858) | 100% |
+| t1 | 100% (15,028 / 15,028) | 100% |
+| t2 | 99.735% (3,011 / 3,019) | 100% |
+| t3 | 99.74% (6,137 / 6,153) | 100% |
+| t4 | 99.9414% (34,125 / 34,145) | 100% |
+| t5 | 54 flagged | |
 
-## Team — Legal Immigrants
-
-- Amar Omerovic
-- Uzair Naeem
-- Aanchal Aanchal
-- Davide Frosi
-- Fatih Tkin
-
-All members worked together on data analysis, rule discovery, code and the write-up.
-
-## AI tools
-
-Claude Code (Anthropic) was used throughout: for the exploratory analysis that discovered the rules above
-(hypothesis scripts checked against the train targets) and for generating and refactoring the submission
-code. All rules were verified by the team against the train targets with `check.py`.
+Maintainability index 100.0 on all 99 files. All six tasks run in 40 s.

@@ -1,0 +1,14 @@
+/* Shared look (same tokens as visuals/theme.json) for the report PDF, the interactive page and video titles. */
+:root {
+  --surface: #fcfcfb; --panel: #eeede8; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7;
+  --blue: #2a78d6; --blue-light: #a9c8ef; --orange: #eb6834; --aqua: #1baf7a; --violet: #6250d6;
+  --wrong: #d03b3b; --grey: #b9b8b0;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --title: 27pt; --subtitle: 16pt; --step: 18pt; --body: 15pt; --note: 13pt; --source: 11pt;
+  --gap: 16px; --radius: 10px;
+}
+body { background: var(--surface); color: var(--ink); font-family: var(--font); }
+h1 { font-size: var(--title); font-weight: 700; margin: 0 0 4px; }
+.subtitle { font-size: var(--subtitle); color: var(--ink-2); margin: 0 0 var(--gap); }
+.source { font-size: var(--source); color: var(--muted); }

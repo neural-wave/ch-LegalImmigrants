@@ -1,0 +1,15 @@
+{
+ "_about": "Shared look for the visuals, the report PDF, the interactive page and the video. style.py and theme.css read these tokens.",
+ "color": {
+  "surface": "#fcfcfb", "panel": "#eeede8", "ink": "#0b0b0b", "ink_2": "#52514e", "muted": "#898781",
+  "grid": "#e1e0d9", "axis": "#c3c2b7",
+  "blue": "#2a78d6", "blue_light": "#a9c8ef", "orange": "#eb6834", "aqua": "#1baf7a", "violet": "#6250d6",
+  "wrong": "#d03b3b", "grey": "#b9b8b0"
+ },
+ "series_order": ["blue", "orange", "aqua", "violet"],
+ "font": {"family": ["Helvetica Neue", "Arial", "DejaVu Sans"], "css": "\"Helvetica Neue\", Helvetica, Arial, sans-serif"},
+ "size_pt": {"title": 27, "subtitle": 16, "step": 18, "body": 15, "tick": 14, "label": 15, "note": 13, "source": 11, "hero": 58},
+ "layout": {"margin_x": 0.04, "title_y": 0.925, "subtitle_y": 0.868, "source_y": 0.025, "plot_top": 0.80, "plot_bottom": 0.12},
+ "canvas": {"width_in": 12.8, "height_in": 7.2, "gif_dpi": 100, "png_dpi": 150, "fps": 10},
+ "motion": {"hold_s": 2.5, "move_s": 0.5, "last_hold_s": 3.5}
+}

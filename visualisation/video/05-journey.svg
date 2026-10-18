@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="648pt" viewBox="0 0 1152 648" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-18T10:40:22.888780</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 648 
+L 1152 648 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #0d1522"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 111.30624 353.23776 
+L 304.45056 353.23776 
+Q 315.92448 353.23776 315.92448 349.03872 
+L 315.92448 271.35648 
+Q 315.92448 267.15744 304.45056 267.15744 
+L 111.30624 267.15744 
+Q 99.83232 267.15744 99.83232 271.35648 
+L 99.83232 349.03872 
+Q 99.83232 353.23776 111.30624 353.23776 
+z
+" clip-path="url(#pae8e001559)" style="fill: #182538"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 350.34624 353.23776 
+L 543.49056 353.23776 
+Q 554.96448 353.23776 554.96448 349.03872 
+L 554.96448 271.35648 
+Q 554.96448 267.15744 543.49056 267.15744 
+L 350.34624 267.15744 
+Q 338.87232 267.15744 338.87232 271.35648 
+L 338.87232 349.03872 
+Q 338.87232 353.23776 350.34624 353.23776 
+z
+" clip-path="url(#pae8e001559)" style="fill: #182538"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 589.38624 353.23776 
+L 782.53056 353.23776 
+Q 794.00448 353.23776 794.00448 349.03872 
+L 794.00448 271.35648 
+Q 794.00448 267.15744 782.53056 267.15744 
+L 589.38624 267.15744 
+Q 577.91232 267.15744 577.91232 271.35648 
+L 577.91232 349.03872 
+Q 577.91232 353.23776 589.38624 353.23776 
+z
+" clip-path="url(#pae8e001559)" style="fill: #182538"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 828.42624 353.23776 
+L 1021.57056 353.23776 
+Q 1033.04448 353.23776 1033.04448 349.03872 
+L 1033.04448 271.35648 
+Q 1033.04448 267.15744 1021.57056 267.15744 
+L 828.42624 267.15744 
+Q 816.95232 267.15744 816.95232 271.35648 
+L 816.95232 349.03872 
+Q 816.95232 353.23776 828.42624 353.23776 
+z
+" clip-path="url(#pae8e001559)" style="fill: #182538"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 112.2624 472.9104 
+L 547.3152 472.9104 
+" clip-path="url(#pae8e001559)" style="fill: none; stroke: #9dbfea; stroke-width: 6.15; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 590.3424 472.9104 
+L 1025.3952 472.9104 
+" clip-path="url(#pae8e001559)" style="fill: none; stroke: #70d5bd; stroke-width: 6.15; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="207.8784" y="315.523596" transform="rotate(-0 207.8784 315.523596)">Observe</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 14.965px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="207.8784" y="399.4272" transform="rotate(-0 207.8784 399.4272)">Errors reveal structure</text>
+   </g>
+   <g id="patch_6">
+    <path d="M 315.054225 310.1976 
+Q 328.353479 310.1976 339.360764 310.1976 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 331.980764 306.5076 
+L 339.360764 310.1976 
+L 331.980764 313.8876 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #70d5bd" x="446.9184" y="315.522795" transform="rotate(-0 446.9184 315.522795)">Reconstruct</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 14.965px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="446.9184" y="399.4272" transform="rotate(-0 446.9184 399.4272)">Historical rules</text>
+   </g>
+   <g id="patch_7">
+    <path d="M 554.094225 310.1976 
+Q 567.393479 310.1976 578.400764 310.1976 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 571.020764 306.5076 
+L 578.400764 310.1976 
+L 571.020764 313.8876 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="685.9584" y="315.523596" transform="rotate(-0 685.9584 315.523596)">Extend</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 14.965px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="685.9584" y="399.4272" transform="rotate(-0 685.9584 399.4272)">Tax hypotheses</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 793.134225 310.1976 
+Q 806.433479 310.1976 817.440764 310.1976 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 810.060764 306.5076 
+L 817.440764 310.1976 
+L 810.060764 313.8876 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="924.9984" y="315.523596" transform="rotate(-0 924.9984 315.523596)">Challenge</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 14.965px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="924.9984" y="399.4272" transform="rotate(-0 924.9984 399.4272)">New evaluation data</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="327.3984" y="514.9008" transform="rotate(-0 327.3984 514.9008)">Through #26: original tasks</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="810.2592" y="514.9008" transform="rotate(-0 810.2592 514.9008)">Later: surprise tax task</text>
+   </g>
+  </g>
+  <g id="text_11">
+   <text style="font-size: 34.85px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #edf2f7" x="97.92" y="77.76" transform="rotate(-0 97.92 77.76)">The journey, not just the score</text>
+  </g>
+  <g id="text_12">
+   <text style="font-size: 14.76px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a5b3c4" x="97.92" y="612.36" transform="rotate(-0 97.92 612.36)">Team-confirmed focus · conceptual stages, not elapsed time</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pae8e001559">
+   <rect x="97.92" y="168.48" width="956.16" height="349.92"/>
+  </clipPath>
+ </defs>
+</svg>

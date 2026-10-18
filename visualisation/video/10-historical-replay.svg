@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="648pt" viewBox="0 0 1152 648" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-18T10:40:23.073174</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 648 
+L 1152 648 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #0d1522"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 111.30624 370.9152 
+L 294.88896 370.9152 
+Q 306.36288 370.9152 306.36288 366.6384 
+L 306.36288 291.0816 
+Q 306.36288 286.8048 294.88896 286.8048 
+L 111.30624 286.8048 
+Q 99.83232 286.8048 99.83232 291.0816 
+L 99.83232 366.6384 
+Q 99.83232 370.9152 111.30624 370.9152 
+z
+" clip-path="url(#p61b7a81569)" style="fill: #182538"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 407.71584 370.9152 
+L 686.91456 370.9152 
+Q 698.38848 370.9152 698.38848 366.6384 
+L 698.38848 291.0816 
+Q 698.38848 286.8048 686.91456 286.8048 
+L 407.71584 286.8048 
+Q 396.24192 286.8048 396.24192 291.0816 
+L 396.24192 366.6384 
+Q 396.24192 370.9152 407.71584 370.9152 
+z
+" clip-path="url(#p61b7a81569)" style="fill: #182538"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 809.30304 267.5592 
+L 1031.13216 267.5592 
+Q 1042.60608 267.5592 1042.60608 263.2824 
+L 1042.60608 201.9816 
+Q 1042.60608 197.7048 1031.13216 197.7048 
+L 809.30304 197.7048 
+Q 797.82912 197.7048 797.82912 201.9816 
+L 797.82912 263.2824 
+Q 797.82912 267.5592 809.30304 267.5592 
+z
+" clip-path="url(#p61b7a81569)" style="fill: #182538"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 809.30304 374.4792 
+L 1031.13216 374.4792 
+Q 1042.60608 374.4792 1042.60608 370.2024 
+L 1042.60608 308.9016 
+Q 1042.60608 304.6248 1031.13216 304.6248 
+L 809.30304 304.6248 
+Q 797.82912 304.6248 797.82912 308.9016 
+L 797.82912 370.2024 
+Q 797.82912 374.4792 809.30304 374.4792 
+z
+" clip-path="url(#p61b7a81569)" style="fill: #182538"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 809.30304 481.3992 
+L 1031.13216 481.3992 
+Q 1042.60608 481.3992 1042.60608 477.1224 
+L 1042.60608 415.8216 
+Q 1042.60608 411.5448 1031.13216 411.5448 
+L 809.30304 411.5448 
+Q 797.82912 411.5448 797.82912 415.8216 
+L 797.82912 477.1224 
+Q 797.82912 481.3992 809.30304 481.3992 
+z
+" clip-path="url(#p61b7a81569)" style="fill: #182538"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; fill: #edf2f7" transform="translate(168.393342 321.882393)">Events</text>
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; fill: #edf2f7" transform="translate(149.868069 346.487998)">Prices / FX</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #70d5bd" x="547.3152" y="334.185996" transform="rotate(-0 547.3152 334.185996)">Historical replay</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="920.2176" y="237.957996" transform="rotate(-0 920.2176 237.957996)">Value / statement</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #70d5bd" x="920.2176" y="344.877996" transform="rotate(-0 920.2176 344.877996)">Tax ledger</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #edf2f7" x="920.2176" y="451.797996" transform="rotate(-0 920.2176 451.797996)">Residual checks</text>
+   </g>
+   <g id="patch_7">
+    <path d="M 310.273717 328.86 
+Q 351.30252 328.86 390.039354 328.86 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 382.659354 325.17 
+L 390.039354 328.86 
+L 382.659354 332.55 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 701.710179 327.4416 
+Q 748.107687 280.74712 792.889707 235.678469 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 785.070398 238.31265 
+L 792.889707 235.678469 
+L 790.305467 243.514424 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 702.287937 329.082206 
+Q 748.109448 334.206072 791.653185 339.075233 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 784.728966 334.587952 
+L 791.653185 339.075233 
+L 783.908829 341.92224 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 701.56428 330.414138 
+Q 748.10851 387.665643 793.206927 443.138734 
+" style="fill: none; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+    <path d="M 791.414695 435.084642 
+L 793.206927 443.138734 
+L 785.688314 439.740065 
+z
+" style="fill: #a5b3c4; stroke: #a5b3c4; stroke-width: 2.05; stroke-linecap: round"/>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 16.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a5b3c4" x="547.3152" y="432.216" transform="rotate(-0 547.3152 432.216)">Era · age · calendar · cents</text>
+   </g>
+  </g>
+  <g id="text_7">
+   <text style="font-size: 34.85px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #edf2f7" x="97.92" y="77.76" transform="rotate(-0 97.92 77.76)">The solution became a historical replay</text>
+  </g>
+  <g id="text_8">
+   <text style="font-size: 14.76px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a5b3c4" x="97.92" y="612.36" transform="rotate(-0 97.92 612.36)">Conceptual architecture · discovery tools stay outside prediction</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p61b7a81569">
+   <rect x="97.92" y="168.48" width="956.16" height="356.4"/>
+  </clipPath>
+ </defs>
+</svg>

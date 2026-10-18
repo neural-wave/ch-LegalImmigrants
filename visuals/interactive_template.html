@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neuron Rules Explorer</title>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<style>
+/*THEME_CSS*/
+body { margin: 0; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 40px; }
+h1 { font-size: 26px; }
+.subtitle { font-size: 16px; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 18px; }
+nav button { font: inherit; font-size: 15px; padding: 8px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--axis); background: var(--surface); color: var(--ink-2); }
+nav button[aria-selected="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+section { display: none; }
+section.active { display: block; }
+h2 { font-size: 21px; margin: 0 0 4px; }
+.lead { font-size: 15px; color: var(--ink-2); margin: 0 0 12px; max-width: 900px; line-height: 1.45; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 0 0 10px; font-size: 15px; }
+select, .steps button { font: inherit; font-size: 15px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--axis);
+  background: var(--surface); color: var(--ink); }
+.steps button[aria-pressed="true"] { background: var(--blue); color: #fff; border-color: var(--blue); }
+.row { display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap); }
+.chart { width: 100%; height: 440px; }
+.chart.small { height: 300px; }
+.card { background: var(--panel); border-radius: var(--radius); padding: 16px 18px; font-size: 15px; line-height: 1.5; }
+.big { font-size: 46px; font-weight: 700; line-height: 1.1; }
+.note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+table { border-collapse: collapse; font-size: 15px; }
+td, th { padding: 4px 10px; text-align: right; }
+td:first-child, th:first-child { text-align: left; }
+th { color: var(--ink-2); font-weight: 400; }
+@media (max-width: 800px) { .row { grid-template-columns: 1fr; } .chart { height: 360px; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Neuron rules explorer</h1>
+<p class="subtitle">The hidden formulas of an old insurance system, rebuilt as plain rules. Every number on this page is
+calculated by our engine from the old system's data.</p>
+<nav id="tabs"></nav>
+
+<section id="climb">
+  <h2>How the accuracy rose over one night</h2>
+  <p class="lead">Share of training rows we get exactly right (to the cent, to the day), per task. Hover a point to see
+  what changed. Dashed: estimated, with the rows our outlier finder marks as hand edits left out (as the official scoring does).</p>
+  <div class="row"><div id="climbChart" class="chart"></div><div id="miChart" class="chart"></div></div>
+  <p class="note">Sources: team logs and git history (visuals/data/milestones.csv). The accuracy axis starts at 90%.</p>
+</section>
+
+<section id="life">
+  <h2>Explore one policy's life</h2>
+  <p class="lead">Premiums buy fund units; each month an admin fee, a management fee and a risk charge sell a few back.
+  Fund value is the units times the price on that day. Pick another policy to see a different story.</p>
+  <div class="controls"><label>Policy <select id="lifePick"></select></label><span id="lifeFacts"></span></div>
+  <div id="lifeChart" class="chart"></div>
+  <div id="chargeChart" class="chart small"></div>
+</section>
+
+<section id="statement">
+  <h2>Where a year of premiums goes</h2>
+  <p class="lead">The annual statement (task t4): premiums paid in the year, minus the four charges. Pick a policy and a year.</p>
+  <div class="controls"><label>Policy <select id="stPick"></select></label><label>Year <select id="stYear"></select></label></div>
+  <div class="row"><div id="stChart" class="chart"></div><div class="card" id="stCard"></div></div>
+</section>
+
+<section id="calendar">
+  <h2>Due dates and collection dates</h2>
+  <p class="lead">Every premium due in the year after the extract date (task t1). A direct debit due on a weekend or a
+  public holiday of canton Ticino is collected on the next business day; bank transfers keep their date.
+  Orange outline: holiday. Hover a day for its numbers.</p>
+  <div id="calChart" class="chart"></div>
+  <div class="card" id="calCard"></div>
+</section>
+
+<section id="discovery">
+  <h2>How a rule is found: who earns the commission?</h2>
+  <p class="lead">Each dot is a commission that a rule gets wrong, placed at the date the premium was received.
+  Step through how the lab tools found the right rule.</p>
+  <div class="controls steps" id="discSteps"></div>
+  <div class="row"><div id="discChart" class="chart"></div><div class="card" id="discCard"></div></div>
+</section>
+
+<section id="proof">
+  <h2>Not fitted to the answers</h2>
+  <p class="lead">Three checks that the rules are general. The first needs no answer file at all, so it also runs on the
+  unseen policies.</p>
+  <div class="row"><div id="proofChart" class="chart small"></div><div class="card" id="proofCard"></div></div>
+  <div class="card" id="holdCard" style="margin-top: 16px"></div>
+</section>
+</main>
+
+<script>
+const DATA = /*DATA*/;
+const T = DATA.theme.color;
+const FONT = DATA.theme.font.css;
+const CFG = {displayModeBar: false, responsive: true};
+
+function base(extra) {
+  return Object.assign({
+    paper_bgcolor: T.surface, plot_bgcolor: T.surface, font: {family: FONT, size: 14, color: T.ink},
+    margin: {l: 70, r: 20, t: 20, b: 50}, hoverlabel: {font: {family: FONT}},
+    legend: {orientation: "h", y: -0.15},
+    xaxis: {gridcolor: T.grid, linecolor: T.axis, zeroline: false},
+    yaxis: {gridcolor: T.grid, linecolor: T.axis, zeroline: false},
+  }, extra || {});
+}
+const euro = v => "€" + Number(v).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const num = v => Number(v).toLocaleString("en-US");
+
+// ---------------------------------------------------------------- tabs
+const TABS = [["climb", "Score climb"], ["life", "One policy's life"], ["statement", "Annual statement"],
+              ["calendar", "Calendar"], ["discovery", "Finding a rule"], ["proof", "Unseen data"]];
+const drawn = {};
+const DRAW = {climb: drawClimb, life: drawLife, statement: drawStatement, calendar: drawCalendar,
+              discovery: () => drawDiscovery(0), proof: drawProof};
+function show(id) {
+  for (const [key] of TABS) {
+    document.getElementById(key).classList.toggle("active", key === id);
+    document.getElementById("tab-" + key).setAttribute("aria-selected", key === id);
+  }
+  if (!drawn[id]) { DRAW[id](); drawn[id] = true; }
+  window.dispatchEvent(new Event("resize"));
+}
+const nav = document.getElementById("tabs");
+for (const [key, name] of TABS) {
+  const b = document.createElement("button");
+  b.id = "tab-" + key; b.textContent = name; b.onclick = () => show(key);
+  nav.appendChild(b);
+}
+
+// ---------------------------------------------------------------- (a) score climb
+function drawClimb() {
+  const names = {t0: "t0 Commission", t1: "t1 Due dates", t2: "t2 Maturity value", t3: "t3 Surrender value", t4: "t4 Statement"};
+  const colors = {t0: T.blue, t1: T.orange, t2: T.aqua, t3: T.violet, t4: T.ink_2};
+  const traces = [];
+  for (const task of Object.keys(names)) {
+    for (const kind of ["measured", "estimated"]) {
+      const rows = DATA.milestones.filter(m => m.series === task && m.kind === kind);
+      if (!rows.length) continue;
+      traces.push({x: rows.map(m => m.time), y: rows.map(m => +m.value), name: names[task] + (kind === "estimated" ? " (estimated)" : ""),
+        mode: "lines+markers", line: {shape: "hv", color: colors[task], dash: kind === "estimated" ? "dash" : "solid", width: 2.5},
+        marker: {size: 8}, showlegend: kind === "measured",
+        text: rows.map(m => m.change), hovertemplate: "%{y:.4f}%<br>%{text}<extra>" + names[task] + "</extra>"});
+    }
+  }
+  Plotly.newPlot("climbChart", traces, base({yaxis: {range: [90, 100.4], ticksuffix: "%", gridcolor: T.grid},
+    xaxis: {gridcolor: T.grid}, annotations: [{x: "2026-10-16 22:23", y: 90.3, text: "t2 started at 23.5%", showarrow: false,
+    xanchor: "left", font: {size: 12, color: T.ink_2}}]}), CFG);
+  const mi = DATA.milestones.filter(m => m.series === "MI");
+  Plotly.newPlot("miChart", [{x: mi.map(m => m.time), y: mi.map(m => +m.value), mode: "lines+markers",
+    line: {shape: "hv", color: T.orange, width: 2.5}, text: mi.map(m => m.change),
+    hovertemplate: "%{y:.1f}<br>%{text}<extra></extra>"}],
+    base({title: {text: "Code readability score (0–100)", font: {size: 14}, x: 0, xanchor: "left"},
+      margin: {l: 45, r: 10, t: 40, b: 50}, yaxis: {range: [70, 102], gridcolor: T.grid}, xaxis: {gridcolor: T.grid}}), CFG);
+}
+
+// ---------------------------------------------------------------- (b) policy life
+function fillPick(id, onchange) {
+  const sel = document.getElementById(id);
+  DATA.examples.forEach((p, i) => sel.add(new Option(p.policy + " · " + p.label, i)));
+  sel.onchange = onchange;
+  return sel;
+}
+function drawLife() {
+  fillPick("lifePick", renderLife);
+  renderLife();
+}
+function renderLife() {
+  const p = DATA.examples[+document.getElementById("lifePick").value];
+  const x = p.months.map(m => m.month + "-28");
+  const funds = Object.keys(p.funds);
+  const palette = [T.blue, T.orange, T.aqua, T.violet, T.grey, T.blue_light];
+  const traces = funds.map((f, i) => ({x, y: p.months.map(m => +m[f]), name: "Fund " + f, stackgroup: "v",
+    line: {width: 0.5, color: palette[i % palette.length]}, fillcolor: palette[i % palette.length], hovertemplate: "%{y:,.2f}<extra>Fund " + f + "</extra>"}));
+  traces.push({x, y: p.months.map(m => +m.paid), name: "Premiums paid so far", line: {dash: "dash", color: T.ink_2, width: 2},
+    hovertemplate: "€%{y:,.2f}<extra>paid so far</extra>"});
+  const sx = p.surrender.map(s => s.date), sy = p.surrender.map(s => +s.surrender);
+  traces.push({x: sx, y: sy, mode: "markers", name: "Surrender value (task t3)", marker: {size: 12, color: T.ink, line: {color: T.surface, width: 2}},
+    hovertemplate: "%{x}<br>surrender value €%{y:,.2f}<extra></extra>"});
+  const shapes = p.holidays.map(h => ({type: "rect", xref: "x", yref: "paper", x0: h[0], x1: h[1], y0: 0, y1: 1,
+    fillcolor: T.panel, line: {width: 0}, layer: "below"}));
+  Plotly.react("lifeChart", traces, base({shapes, yaxis: {title: "Value at the month end (" + p.currency + ")", gridcolor: T.grid},
+    hovermode: "x unified"}), CFG);
+  const kinds = [["ADM", "Admin fee", T.blue], ["AMC", "Management fee", T.orange], ["RSK", "Risk charge", T.aqua]];
+  Plotly.react("chargeChart", kinds.map(([k, n, c]) => ({x, y: p.months.map(m => +m[k]), name: n, type: "bar", marker: {color: c},
+    hovertemplate: "€%{y:,.2f}<extra>" + n + "</extra>"})),
+    base({barmode: "stack", bargap: 0.1, yaxis: {title: "Monthly charges (" + p.currency + ")", gridcolor: T.grid}}), CFG);
+  const last = p.months[p.months.length - 1];
+  document.getElementById("lifeFacts").textContent = `Started ${p.start} in ${p.currency}. ` +
+    (p.holidays.length ? "Grey band: premium holiday. " : "") +
+    (p.switches.length ? `${p.switches.length} fund switch${p.switches.length > 1 ? "es" : ""}. ` : "") +
+    `Last month shown ${last.month}.`;
+}
+
+// ---------------------------------------------------------------- (c) annual statement
+function drawStatement() {
+  fillPick("stPick", () => { fillYears(); renderStatement(); });
+  document.getElementById("stYear").onchange = renderStatement;
+  fillYears(); renderStatement();
+}
+function fillYears() {
+  const p = DATA.examples[+document.getElementById("stPick").value];
+  const sel = document.getElementById("stYear"); sel.innerHTML = "";
+  const years = Object.keys(p.statements);
+  years.forEach(y => sel.add(new Option(y, y)));
+  sel.value = years.includes("2021") ? "2021" : years[years.length - 1];
+}
+function renderStatement() {
+  const p = DATA.examples[+document.getElementById("stPick").value];
+  const y = document.getElementById("stYear").value, s = p.statements[y];
+  const steps = [["Premiums paid", +s.premiums, "absolute"], ["Entry charge", -s.entry, "relative"], ["Admin fee", -s.admin, "relative"],
+                 ["Management fee", -s.management, "relative"], ["Risk charge", -s.risk, "relative"], ["After charges", 0, "total"]];
+  Plotly.react("stChart", [{type: "waterfall", x: steps.map(r => r[0]), y: steps.map(r => r[1]), measure: steps.map(r => r[2]),
+    increasing: {marker: {color: T.blue}}, decreasing: {marker: {color: T.orange}}, totals: {marker: {color: T.aqua}},
+    connector: {line: {color: T.muted, width: 1}}, textposition: "outside",
+    text: steps.map(r => (r[2] === "total" ? (s.premiums - s.total) : r[1]).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})),
+    hovertemplate: "%{x}: " + p.currency + " %{y:,.2f}<extra></extra>"}],
+    base({yaxis: {title: p.currency, gridcolor: T.grid}, showlegend: false}), CFG);
+  const share = +s.premiums ? (100 * s.total / s.premiums).toFixed(1) + "% of the premiums" : "no premiums this year";
+  document.getElementById("stCard").innerHTML = `<b>${p.policy}, ${y}</b><br>
+    <table><tr><td>Premiums paid</td><td>${(+s.premiums).toFixed(2)}</td></tr>
+    <tr><td>Entry charge</td><td>${s.entry}</td></tr><tr><td>Admin fee</td><td>${s.admin}</td></tr>
+    <tr><td>Management fee</td><td>${s.management}</td></tr><tr><td>Risk charge</td><td>${s.risk}</td></tr>
+    <tr><td><b>Total charges</b></td><td><b>${s.total}</b></td></tr></table>
+    <p>${share}. Amounts in ${p.currency}.</p>
+    <p class="note">Premiums count in the year the money arrived; charges in the year their units were sold.</p>`;
+}
+
+// ---------------------------------------------------------------- (d) calendar
+function drawCalendar() {
+  const c = DATA.calendar, start = new Date(c.extract + "T00:00:00Z");
+  const days = [];
+  for (let i = 1; i <= 365; i++) days.push(new Date(start.getTime() + i * 864e5));
+  const monday = new Date(days[0].getTime() - ((days[0].getUTCDay() + 6) % 7) * 864e5);
+  const weeks = Math.floor((days[days.length - 1] - monday) / (7 * 864e5)) + 1;
+  const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const rows = [];  // 7 due rows, a gap, 7 collected rows
+  const z = [], text = [];
+  for (let r = 0; r < 15; r++) { z.push(Array(weeks).fill(null)); text.push(Array(weeks).fill("")); }
+  const shapes = [], ticks = [];
+  for (const d of days) {
+    const iso = d.toISOString().slice(0, 10), w = Math.floor((d - monday) / (7 * 864e5)), wd = (d.getUTCDay() + 6) % 7;
+    const hol = c.holidays[iso];
+    const due = c.due[iso] || 0, got = c.collected[iso] || 0;
+    const info = `${names[wd]} ${iso}${hol ? " · " + hol : ""}<br>due: ${num(due)}<br>collected: ${num(got)}` +
+      (hol ? `<br>direct debits move to ${c.next_business_day[iso]}` : "");
+    z[wd][w] = due; text[wd][w] = info; z[8 + wd][w] = got; text[8 + wd][w] = info;
+    if (hol) for (const r of [wd, 8 + wd]) shapes.push({type: "rect", x0: w - 0.5, x1: w + 0.5, y0: r - 0.5, y1: r + 0.5,
+      line: {color: T.orange, width: 2.5}});
+    if (d.getUTCDate() === 1) ticks.push([w, d.toLocaleString("en-US", {month: "short", timeZone: "UTC"})]);
+  }
+  const ylabels = [...names, "", ...names];
+  Plotly.newPlot("calChart", [{type: "heatmap", z, text, hovertemplate: "%{text}<extra></extra>", xgap: 2, ygap: 2,
+    colorscale: [[0, T.panel], [0.15, T.blue_light], [0.5, T.blue], [1, "#123a6b"]], zmin: 0, showscale: false}],
+    base({shapes, margin: {l: 120, r: 10, t: 30, b: 20},
+      yaxis: {autorange: "reversed", tickvals: [...Array(15).keys()], ticktext: ylabels, showgrid: false},
+      xaxis: {tickvals: ticks.map(t => t[0]), ticktext: ticks.map(t => t[1]), side: "top", showgrid: false},
+      annotations: [{x: -0.11, y: 3, xref: "paper", text: "<b>Due</b>", showarrow: false, font: {size: 16}},
+                    {x: -0.11, y: 11, xref: "paper", text: "<b>Collected</b>", showarrow: false, font: {size: 16}}]}), CFG);
+  document.getElementById("calCard").innerHTML = `${num(c.rows)} upcoming payments from ${c.extract}; ` +
+    `${num(c.moved)} of them are collected later than they are due. Holidays come from rules (fixed dates and Easter), ` +
+    `so they work for any year: ${Object.values(c.holidays).length} fall in this window.`;
+}
+
+// ---------------------------------------------------------------- (e) rule discovery
+const STEPS = [
+  ["1 · Simplest guess", "Use the broker the policy has today."],
+  ["2 · Decision tree", "What do the wrong rows have in common?"],
+  ["3 · New rule", "Use the broker valid on the day the money arrived."],
+  ["4 · Hand edits", "What is left follows no rule: changed by hand in the old system."]];
+function drawDiscovery(step) {
+  const box = document.getElementById("discSteps");
+  if (!box.children.length) STEPS.forEach((s, i) => {
+    const b = document.createElement("button"); b.textContent = s[0]; b.onclick = () => drawDiscovery(i); box.appendChild(b);
+  });
+  [...box.children].forEach((b, i) => b.setAttribute("aria-pressed", i === step));
+  const t = DATA.t0, pts = t.points;
+  const keep = pts.filter(p => step < 2 || !p.fixed);
+  const color = keep.map(p => (step === 0 ? T.wrong : (p.split ? T.wrong : T.violet)));
+  Plotly.react("discChart", [{x: keep.map(p => p.date), y: keep.map(p => p.delta), mode: "markers", type: "scattergl",
+    marker: {color, size: keep.map(p => (step && !p.split ? 11 : 6)), opacity: 0.8},
+    hovertemplate: "%{x}<br>error €%{y:.2f}<extra></extra>"}],
+    base({yaxis: {title: "Commission error per premium (€)", range: [-90, 50], gridcolor: T.grid, zeroline: true, zerolinecolor: T.blue, zerolinewidth: 4},
+      xaxis: {title: "Date the premium was received", range: ["1994-01-01", "2026-12-31"], gridcolor: T.grid}, showlegend: false}), CFG);
+  const wrong = step < 2 ? t.naive_wrong : t.shipped_wrong;
+  const exact = (100 * (t.rows - wrong) / t.rows).toFixed(wrong > 100 ? 2 : 4);
+  let html = `<div class="big" style="color:${step === 3 ? T.violet : T.wrong}">${num(wrong)}</div>
+    rows wrong of ${num(t.rows)} (${exact}% exact)<p><b>${STEPS[step][0]}</b>: ${STEPS[step][1]}</p>`;
+  if (step >= 1) html += `<p>The tree's first question: <b>did the broker's commission level change during the policy?</b><br>
+    Yes: ${num(t.split_yes_rows)} rows, ${num(t.split_yes_wrong)} wrong.<br>No: ${num(t.split_no_rows)} rows, ${num(t.split_no_wrong)} wrong.</p>`;
+  if (step === 3) html += `<p>The ${t.shipped_wrong} rows left: ${t.left.filter(r => r.listed).length} are on policies in the old
+    system's own exception list. Each is a whole-euro change. They go to the outlier task (t5).</p>`;
+  document.getElementById("discCard").innerHTML = html;
+}
+
+// ---------------------------------------------------------------- (f) unseen proof
+function drawProof() {
+  const e = DATA.exits;
+  Plotly.newPlot("proofChart", [
+    {type: "bar", orientation: "h", y: ["Training policies", "Unseen policies"], x: [100 * e.train.zero / e.train.exited, 100 * e.unseen.zero / e.unseen.exited], name: "exactly 0 units left",
+     marker: {color: [T.blue, T.aqua]}, text: [`${e.train.zero} of ${e.train.exited}`, `${e.unseen.zero} of ${e.unseen.exited}`],
+     textposition: "inside", insidetextfont: {color: "#fff", size: 18}, hovertemplate: "%{text} end at exactly 0 units<extra></extra>"}],
+    base({margin: {l: 140, r: 20, t: 20, b: 40}, xaxis: {title: "Share of the policies that ended by surrender or death", ticksuffix: "%", range: [0, 100], gridcolor: T.grid}, showlegend: false}), CFG);
+  const r = DATA.readiness;
+  document.getElementById("proofCard").innerHTML = `<b>1 · After a surrender or death, exactly 0 fund units are left.</b>
+    The units come from our replay of the bookings, so this check needs no answer file.
+    <p><b>3 · Ready for new data</b></p><div class="big" style="color:${T.aqua}">${r.passed}/${r.total}</div>readiness checks pass:
+    scores, runtime, memory, other dates and ${r.checks.filter(c => c.includes("survives")).length} cases of missing data rows.`;
+  const pct = (c, n) => c === n ? "100%" : (Math.floor(100000 * c / n) / 1000).toFixed(3) + "%";
+  let rows = "";
+  for (const [task, s] of Object.entries(DATA.scores)) rows += `<tr><td>${task.replace(/_/g, " ")}</td>
+    <td>${pct(s.check.correct, s.check.rows)}</td><td>${pct(s.rest.correct, s.rest.rows)}</td>
+    <td>${pct(s.check.correct_est, s.check.rows_est)}</td><td>${pct(s.rest.correct_est, s.rest.rows_est)}</td></tr>`;
+  document.getElementById("holdCard").innerHTML = `<b>2 · The same on a fixed 20% check group as on the other 80%</b>
+    <table><tr><th></th><th>check group</th><th>other 80%</th><th>check, hand edits left out</th><th>other, hand edits left out</th></tr>${rows}</table>
+    <p class="note">Check group: fixed 20% of the training policies by a hash of the policy number; the lab tools fit only on the other 80%.</p>`;
+}
+
+show("climb");
+</script>
+</body>
+</html>
