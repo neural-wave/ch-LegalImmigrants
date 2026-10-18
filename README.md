@@ -203,7 +203,7 @@ cd LifewareChallenge/participants/starter_kit && python check.py --submission my
 | `  …/my_solution/neuron/` | the shared engine: old formats, versions, calendars, eras, fund replay, charges, taxes |
 | `  …/my_solution/tasks/` | one module per task |
 | `tests/` | the readiness checks: scores, runtime, memory, other dates, exports with missing rows |
-| `report/` | the 3-page report, interactive charts, video script |
+| `report/main.pdf` | the 3-page report |
 
 ## Team
 
