@@ -7,7 +7,6 @@ Nobody documented its formulas. We had its data export and, for most tasks, a se
 to find the hidden rules and write them again as plain Python that gives the same answers, **to the cent and to
 the day**, also for policies we never saw.
 
-![Results](visuals/out/09_results_card.png)
 
 ## Results at a glance
 
@@ -61,7 +60,6 @@ A rule is never just a formula. Most of the work was in the small choices around
 | Which calendar | collections move to the next **Ticino** business day (cantonal holidays, no Good Friday) |
 | Which exceptions | hand edits are listed for t5, never patched into a rule |
 
-![Eight rules we found](visuals/out/10_rules_found.png)
 
 ## How the code is built
 
@@ -206,7 +204,6 @@ cd LifewareChallenge/participants/starter_kit && python check.py --submission my
 | `  …/my_solution/tasks/` | one module per task |
 | `tests/` | the readiness checks: scores, runtime, memory, other dates, exports with missing rows |
 | `report/` | the 3-page report, interactive charts, video script |
-| `visuals/` | the figures and animations |
 
 ## Team
 
